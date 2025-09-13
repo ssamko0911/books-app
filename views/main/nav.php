@@ -13,8 +13,13 @@
 
             <!-- Login / Sign Up -->
             <div class="d-flex">
-                <a href="login.php" class="btn btn-outline-light me-2">Login</a>
-                <a href="register.php" class="btn btn-warning">Sign Up</a>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <span class="btn btn-outline-light ms-2">Welcome, <?= htmlspecialchars($_SESSION['username']) ?> (<?= $_SESSION['role'] ?>)</span>
+                <a href="/logout" class="btn btn-outline-light ms-2">Logout</a>
+            <?php else: ?>
+                <a href="/login-form" class="btn btn-outline-light me-2">Login</a>
+                <a href="/register-form" class="btn btn-warning">Sign Up</a>
+            <?php endif; ?>
             </div>
         </div>
     </div>
