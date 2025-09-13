@@ -24,4 +24,15 @@ class UrlTool
         require __DIR__ . '/../../views/template.view.php';
         die();
     }
+
+    public static function view(string $templatePath, array $data = []): void
+    {
+        extract($data);
+
+        ob_start();
+        require __DIR__ . $templatePath;
+        $slot = ob_get_clean();
+
+        require __DIR__ . '/../../views/template.view.php';
+    }
 }
