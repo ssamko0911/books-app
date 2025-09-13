@@ -10,9 +10,4 @@ class Debug
         echo '</pre>';
         die();
     }
-
-    public static function urlIs(string $url): bool
-    {
-        return $_SERVER['REQUEST_URI'] === $url;
-    }
 }
