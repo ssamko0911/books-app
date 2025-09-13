@@ -5,7 +5,8 @@ use App\Utils\UrlTool;
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
 
 $routes = [
-    '/' => '/../Controller/index.php',
+    '/' => '/../Controller/books.php',
+    '/books' => '/../Controller/books.php',
 ];
 
 function route($uri, $routes)
