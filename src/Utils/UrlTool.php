@@ -2,6 +2,9 @@
 
 namespace App\Utils;
 
+use JetBrains\PhpStorm\NoReturn;
+use PH7\JustHttp\StatusCode;
+
 class UrlTool
 {
     public static function urlIs(string $url): bool
@@ -9,9 +12,15 @@ class UrlTool
         return $_SERVER['REQUEST_URI'] === $url;
     }
 
-    public static function abort(): void
+    #[NoReturn]
+    public static function abort(int $code = StatusCode::NOT_FOUND): void
     {
-        http_response_code(404);
+        http_response_code($code);
+
+        ob_start();
+        require __DIR__ . "/../../views/$code.php";
+        $slot = ob_get_clean();
+
         require __DIR__ . '/../../views/template.view.php';
         die();
     }
