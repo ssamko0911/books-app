@@ -10,7 +10,7 @@
     <h1 class="mb-4">
         <?= $heading ?? 'Sorry, page not found.' ?>
     </h1>
-    <?= $slot ?? '' ?>
+    <?= $slot ?? '<a href="/">Go home</a>' ?>
 </div>
 
 <!-- Footer -->
