@@ -7,10 +7,13 @@
 <?php require __DIR__ . '/main/nav.php'; ?>
 
 <div class="container">
-    <h1 class="mb-4">
-        <?= $heading ?? 'Sorry, page not found.' ?>
-    </h1>
-    <?= $slot ?? '<a href="/">Go home</a>' ?>
+    <?php if (isset($heading)): ?>
+        <h1 class="mb-4">
+            <?= $heading ?>
+        </h1>
+    <?php endif; ?>
+
+    <?= $slot ?? '' ?>
 </div>
 
 <!-- Footer -->
