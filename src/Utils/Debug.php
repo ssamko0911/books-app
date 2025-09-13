@@ -3,7 +3,7 @@
 namespace App\Utils;
 class Debug
 {
-    public static function dd(mixed ...$vars): void
+    public static function dd(mixed $vars): void
     {
         echo '<pre>';
         var_dump($vars);
