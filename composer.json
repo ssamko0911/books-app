@@ -1,0 +1,19 @@
+{
+    "name": "karap/book-recommendation-app",
+    "description": "learning project",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ssamko0911",
+            "email": "ssamko091184@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {}
+}

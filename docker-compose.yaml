@@ -1,0 +1,35 @@
+networks:
+  db-network:
+    driver: bridge
+
+services:
+  books-web:
+    image: nginx:latest
+    container_name: web-nginx-books
+    ports:
+      - "${APP_PORT}:80"
+    volumes:
+      - ./public:/srv/app/public
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - books-app
+    networks:
+      - db-network
+    restart: unless-stopped
+
+  books-app:
+    build: .
+    container_name: app-books
+    environment:
+      DB_HOST: ${DB_HOST}
+      CERT_PATH: ${CERT_PATH}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - .:/srv/app
+      - ./public:/srv/app/public
+      - ./php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+    networks:
+      - db-network
+    restart: unless-stopped
