@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use App\Controller\AuthController;
 use App\Controller\BookController;
 use App\Utils\UrlTool;
 
@@ -9,6 +10,11 @@ $routes = [
     '/' => [BookController::class, 'index'],
     '/books' => [BookController::class, 'index'],
     '/books/{id}' => [BookController::class, 'show'],
+    '/login' =>  [AuthController::class, 'login'],
+    '/login-form' =>  [AuthController::class, 'showLoginForm'],
+    '/logout' =>  [AuthController::class, 'logout'],
+    '/register' =>  [AuthController::class, 'register'],
+    '/register-form' =>  [AuthController::class, 'showRegisterForm'],
 ];
 
 function route($uri, $routes)
@@ -22,8 +28,13 @@ function route($uri, $routes)
             array_shift($matches);
 
             $controller = new $controllerClass();
-            $matches = array_map(static fn($v) => (int)$v, $matches);
-            $controller->$method(...$matches);
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && $method === 'login') {
+                $controller->$method();
+            } else {
+                $matches = array_map(static fn($v) => (int)$v, $matches);
+                $controller->$method(...$matches);
+            }
+
             $routeFound = true;
             break;
         }
