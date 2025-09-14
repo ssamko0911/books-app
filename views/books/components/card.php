@@ -8,7 +8,7 @@
                 <span class="badge bg-primary"><?= htmlspecialchars($book['created_at']) ?></span>
             </p>
             <a href="books/<?= urlencode($book['id']) ?>" class="btn btn-outline-primary">
-                View Recommendations
+                View Details
             </a>
         </div>
     </div>
