@@ -7,7 +7,7 @@ use App\Repository\RecommendationRepository;
 use App\Utils\UrlTool;
 use PDO;
 
-final class RecommendationsController
+final class RecommendationsController extends BaseController
 {
     private RecommendationRepository $recommendationRepository;
 
@@ -20,7 +20,7 @@ final class RecommendationsController
     {
         $recommendations = $this->recommendationRepository->getAll();
 
-        UrlTool::view(Path::RECOMMENDATIONS_LIST->value, [
+        $this->render(Path::RECOMMENDATIONS_LIST->value, [
                 'recommendations' => $recommendations,
             ]
         );
@@ -34,8 +34,9 @@ final class RecommendationsController
             UrlTool::abort();
         }
 
-        UrlTool::view(Path::RECOMMENDATIONS_SHOW->value, [
-            'recommendation' => $recommendation,
-        ]);
+        $this->render(Path::RECOMMENDATIONS_LIST->value, [
+                'recommendation' => $recommendation,
+            ]
+        );
     }
 }

@@ -10,7 +10,7 @@ use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PH7\JustHttp\StatusCode;
 
-final class BookController
+final class BookController extends BaseController
 {
     private BookRepository $bookRepository;
 
@@ -23,17 +23,14 @@ final class BookController
     {
         $books = $this->bookRepository->getAll();
 
-        UrlTool::view(Path::BOOKS_LIST->value, [
+        $this->render(Path::BOOKS_LIST->value, [
             'books' => $books,
         ]);
     }
 
     public function show(int $id): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            UrlTool::view(Path::LOGIN->value);
-            exit();
-        }
+        $this->requireLogin();
 
         $book = $this->bookRepository->findOneById($id);
 
@@ -41,27 +38,20 @@ final class BookController
             UrlTool::abort();
         }
 
-        UrlTool::view(Path::SHOW_BOOK->value, [
+        $this->render(Path::SHOW_BOOK->value, [
             'book' => $book,
         ]);
     }
 
     public function showAddBookForm(): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            UrlTool::view(Path::LOGIN->value);
-            exit();
-        }
-
-        UrlTool::view(Path::ADD_BOOK->value);
+        $this->requireLogin();
+        $this->render(Path::ADD_BOOK->value);
     }
 
     public function store(): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            UrlTool::view(Path::LOGIN->value);
-            exit();
-        }
+        $this->requireLogin();
 
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             $title = $_POST['title'] ?? '';
@@ -79,18 +69,14 @@ final class BookController
                     $year ? (int)$year : null,
                 );
 
-                header('Location: /books');
-                exit();
+                $this->redirect('/books');
             }
         }
     }
 
     public function showEditBookForm(int $id): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            UrlTool::view(Path::LOGIN->value);
-            exit();
-        }
+        $this->requireLogin();
 
         $book = $this->bookRepository->findOneById($id);
 
@@ -112,12 +98,9 @@ final class BookController
         ]);
     }
 
-    public function update(int $id): void
+    #[NoReturn] public function update(int $id): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            UrlTool::view(Path::LOGIN->value);
-            exit();
-        }
+        $this->requireLogin();
 
         $book = $this->bookRepository->findOneById($id);
 
@@ -139,15 +122,12 @@ final class BookController
             'added_by_user' => $user_id,
         ]);
 
-        header("Location: /books/$id");
-        exit();
+        $this->redirect('/books/' . $id);
     }
 
     #[NoReturn] public function delete(int $id): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            UrlTool::view(Path::LOGIN->value);
-        }
+        $this->requireLogin();
 
         if ('admin' !== $_SESSION['role']) {
             Logger::getLogger()->warning('Unauthorized book delete attempt', [
@@ -172,7 +152,6 @@ final class BookController
             'user_id' => $_SESSION['user_id'],
         ]);
 
-        header('Location: /books');
-        exit();
+        $this->redirect('/books');
     }
 }

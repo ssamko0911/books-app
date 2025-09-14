@@ -5,11 +5,10 @@ namespace App\Controller;
 use App\Enum\AppStrings;
 use App\Enum\Path;
 use App\Repository\UserRepository;
-use App\Utils\UrlTool;
 use JetBrains\PhpStorm\NoReturn;
 use PDO;
 
-final readonly class AuthController
+final class AuthController extends BaseController
 {
     private UserRepository $userRepository;
 
@@ -20,7 +19,7 @@ final readonly class AuthController
 
     #[NoReturn] public function showLoginForm(): void
     {
-        UrlTool::view(Path::LOGIN->value);
+        $this->render(Path::LOGIN->value);
     }
 
     public function login(string $email, string $password): bool|string
@@ -42,13 +41,12 @@ final readonly class AuthController
     #[NoReturn] public function logout(): void
     {
         session_destroy();
-        header('Location: /');
-        exit();
+        $this->redirect('/');
     }
 
     public function showRegisterForm(): void
     {
-        UrlTool::view(Path::REGISTER->value);
+        $this->render(Path::REGISTER->value);
     }
 
     public function register(string $username, string $email, string $password): bool|string

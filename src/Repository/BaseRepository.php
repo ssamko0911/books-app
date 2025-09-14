@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use PDO;
 
-class BaseRepository
+abstract class BaseRepository
 {
     protected PDO $connection;
     protected string $table;
