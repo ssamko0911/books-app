@@ -10,9 +10,12 @@
             <a href="books/<?= urlencode($book['id']) ?>" class="btn btn-outline-primary">
                 View Details
             </a>
-            <?php if (isset($_SESSION['user_id'])): ?>
+            <?php if (isset($_SESSION['user_id']) && 'admin' === $_SESSION['role']): ?>
                 <a href="books/<?= urlencode($book['id']) ?>/edit" class="btn btn-outline-primary">
                     Edit
+                </a>
+                <a href="books/<?= urlencode($book['id']) ?>/delete" class="btn btn-outline-danger">
+                    Delete
                 </a>
             <?php endif; ?>
         </div>

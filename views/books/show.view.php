@@ -22,5 +22,6 @@
     </ul>
 <?php endif; ?>
 
+<a href="/books/<?= urlencode((string)$book['id']) ?>/edit" class="btn btn-outline-primary mt-3">Edit</a>
 <a href="/books" class="btn btn-secondary mt-3">Back to Books</a>
 
