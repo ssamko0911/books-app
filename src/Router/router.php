@@ -6,6 +6,7 @@ use App\Controller\RecommendationsController;
 use App\Database\Database;
 use App\Utils\UrlTool;
 
+//TODO: Refactor as a class
 $dbConnection = Database::getInstance();
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
 

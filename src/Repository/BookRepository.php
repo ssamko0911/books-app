@@ -28,6 +28,7 @@ final class BookRepository extends BaseRepository
         return $this->connection->lastInsertId();
     }
 
+    //TODO:Move to BaseRepo & Refactor to make reusable across repos
     public function update(int $id, array $data): bool
     {
         $stmt = $this->connection->prepare(

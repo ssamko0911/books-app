@@ -28,6 +28,7 @@ abstract class BaseRepository
         return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
+    //TODO:Refactor to make reusable across repos
     public function create(string $title, int $author, int $user, ?string $description = null, ?int $publishedYear = null ): bool|string
     {
         $stmt = $this->connection->prepare("INSERT INTO `book_recommendations_books` (title,author_id,description,published_year,added_by_user) VALUES (?,?,?,?,?)");
