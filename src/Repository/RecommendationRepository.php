@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Repository;
+
+use App\Database\Database;
+use PDO;
+
+class RecommendationRepository
+{
+    private PDO $connection;
+    public function __construct()
+    {
+        $this->connection = Database::getInstance();
+    }
+
+    public function getAll(): array
+    {
+        return $this->connection->query("SELECT * FROM `book_recommendations_recommendations`")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function findOneById(int $id): ?array
+    {
+        $statement = $this->connection->prepare("SELECT * FROM `book_recommendations_recommendations` WHERE `id` = :id");
+        $statement->bindParam(":id", $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+}
