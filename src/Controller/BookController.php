@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Enum\Path;
 use App\Repository\BookRepository;
+use App\Utils\Logger;
 use App\Utils\UrlTool;
+use PH7\JustHttp\StatusCode;
 
 class BookController
 {
@@ -26,6 +28,11 @@ class BookController
 
     public function show(int $id): void
     {
+        if (!isset($_SESSION['user_id'])) {
+            UrlTool::view(Path::LOGIN->value);
+            exit();
+        }
+
         $book = $this->bookRepository->findOneById($id);
 
         if (null === $book) {
@@ -59,9 +66,10 @@ class BookController
             $author_id = $_POST['author'] ?? '';
             $description = $_POST['description'] ?? '';
             $year = $_POST['published_year'] ?? null;
+            $user_id = $_SESSION['user_id'];
 
             if ($title && $author_id) {
-                $this->bookRepository->create($title, $author_id, $description, $year ? (int)$year : null);
+                $this->bookRepository->create($title, $author_id, $description, $year ? (int)$year : null, $user_id);
                 UrlTool::view(Path::BOOKS_LIST->value, [
                         'books' => $this->bookRepository->getAll(),
                     ]
@@ -69,5 +77,62 @@ class BookController
                 exit;
             }
         }
+    }
+
+    public function showEditBookForm(int $id): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            UrlTool::view(Path::LOGIN->value);
+            exit();
+        }
+
+        $book = $this->bookRepository->findOneById($id);
+
+        if (null === $book) {
+            UrlTool::abort();
+        }
+
+        if ($book['added_by_user'] !== $_SESSION['user_id']) {
+            Logger::getLogger()->warning('Unauthorized book edit attempt', [
+                'book_id' => $id,
+                'user_id' => $_SESSION['user_id'] ?? null,
+            ]);
+
+            UrlTool::abort(StatusCode::FORBIDDEN);
+        }
+
+        UrlTool::view(Path::EDIT_BOOK->value, [
+            'book' => $book,
+        ]);
+    }
+
+    public function update(int $id): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            UrlTool::view(Path::LOGIN->value);
+            exit();
+        }
+
+        $book = $this->bookRepository->findOneById($id);
+
+        if (null === $book) {
+            UrlTool::abort();
+        }
+
+        $title = $_POST['title'] ?? '';
+        $author_id = $_POST['author'] ?? '';
+        $description = $_POST['description'] ?? '';
+        $year = $_POST['published_year'] ?? null;
+        $user_id = $_SESSION['user_id'];
+
+        $this->bookRepository->update($id, [
+            'title' => $title,
+            'author_id' => $author_id,
+            'description' => $description,
+            'published_year' => $year,
+            'added_by_user' => $user_id,
+        ]);
+
+        $this->show($id);
     }
 }
