@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 namespace App\Repository;
+
 use App\Database\Database;
 use PDO;
 
@@ -25,5 +26,18 @@ final class BookRepository
         $statement->execute();
 
         return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    public function create(string $title, string $author, ?string $description = null, ?int $publishedYear = null): bool|string
+    {
+        $stmt = $this->connection->prepare("INSERT INTO `book_recommendations_books` (title,author_id,description,published_year) VALUES (?,?,?,?)");
+        $stmt->execute([
+            $title,
+            $author,
+            $description,
+            $publishedYear
+        ]);
+
+        return $this->connection->lastInsertId();
     }
 }
