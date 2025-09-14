@@ -8,7 +8,7 @@ use App\Utils\Logger;
 use App\Utils\UrlTool;
 use PH7\JustHttp\StatusCode;
 
-class BookController
+final class BookController
 {
     private BookRepository $bookRepository;
 

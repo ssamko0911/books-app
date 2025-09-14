@@ -6,7 +6,7 @@ use App\Enum\Path;
 use App\Repository\RecommendationRepository;
 use App\Utils\UrlTool;
 
-class RecommendationsController
+final class RecommendationsController
 {
     private RecommendationRepository $recommendationRepository;
 
