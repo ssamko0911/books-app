@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
+use App\Enum\AppStrings;
 use App\Enum\Path;
 use App\Repository\BookRepository;
 use App\Utils\Logger;
-use App\Utils\UrlTool;
 use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PH7\JustHttp\StatusCode;
@@ -35,7 +35,7 @@ final class BookController extends BaseController
         $book = $this->bookRepository->findOneById($id);
 
         if (null === $book) {
-            UrlTool::abort();
+            $this->abort();
         }
 
         $this->render(Path::SHOW_BOOK->value, [
@@ -82,17 +82,10 @@ final class BookController extends BaseController
         $book = $this->bookRepository->findOneById($id);
 
         if (null === $book) {
-            UrlTool::abort();
+            $this->abort();
         }
 
-        if ('admin' !== $_SESSION['role'] && $book['added_by_user'] !== $_SESSION['user_id']) {
-            Logger::getLogger()->warning('Unauthorized book edit attempt', [
-                'book_id' => $id,
-                'user_id' => $_SESSION['user_id'] ?? null,
-            ]);
-
-            UrlTool::abort(StatusCode::FORBIDDEN);
-        }
+        $this->requireOwnerOrAdmin($book, AppStrings::NOT_AUTHORISED_EDIT->value);
 
         $this->render(Path::EDIT_BOOK->value, [
             'book' => $book,
@@ -106,7 +99,7 @@ final class BookController extends BaseController
         $book = $this->bookRepository->findOneById($id);
 
         if (null === $book) {
-            UrlTool::abort();
+            $this->abort();
         }
 
         $title = $_POST['title'] ?? '';
@@ -133,24 +126,24 @@ final class BookController extends BaseController
         $this->requireLogin();
 
         if ('admin' !== $_SESSION['role']) {
-            Logger::getLogger()->warning('Unauthorized book delete attempt', [
+            Logger::getLogger()->warning(AppStrings::NOT_AUTHORISED_DELETE->value, [
                 'book_id' => $id,
                 'user_id' => $_SESSION['user_id'] ?? null,
                 'role' => $_SESSION['role'] ?? null,
             ]);
 
-            UrlTool::abort(StatusCode::FORBIDDEN);
+            $this->abort(StatusCode::FORBIDDEN);
         }
 
         $book = $this->bookRepository->findOneById($id);
 
         if (null === $book) {
-            UrlTool::abort();
+            $this->abort();
         }
 
         $this->bookRepository->delete($id);
 
-        Logger::getLogger()->info('Book deleted', [
+        Logger::getLogger()->info(AppStrings::BOOK_DELETE->value, [
             'book_id' => $id,
             'user_id' => $_SESSION['user_id'],
         ]);
