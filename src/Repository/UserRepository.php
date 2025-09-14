@@ -4,18 +4,12 @@ namespace App\Repository;
 
 use PDO;
 
-final readonly class UserRepository
+final class UserRepository extends BaseRepository
 {
-    private PDO $connection;
-
-    public function __construct(PDO $connection)
-    {
-        $this->connection = $connection;
-    }
-
+    protected string $table = 'book_recommendations_users';
     public function createUser(string $name, string $email, string $password): bool|string
     {
-        $stmt = $this->connection->prepare("INSERT INTO `book_recommendations_users` (username,email,password) VALUES (?,?,?)");
+        $stmt = $this->connection->prepare("INSERT INTO {$this->table} (username,email,password) VALUES (?,?,?)");
         $stmt->execute([
             $name,
             $email,
@@ -27,7 +21,7 @@ final readonly class UserRepository
 
     public function findByEmail(string $email): array|false
     {
-        $stmt = $this->connection->prepare("SELECT * FROM `book_recommendations_users` WHERE email = ?");
+        $stmt = $this->connection->prepare("SELECT * FROM {$this->table} WHERE email = ?");
         $stmt->execute([$email]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);

@@ -23,7 +23,7 @@ final class BookController
     {
         $books = $this->bookRepository->getAll();
 
-        UrlTool::view('/../../views/books/index.view.php', [
+        UrlTool::view(Path::BOOKS_LIST->value, [
             'books' => $books,
         ]);
     }
