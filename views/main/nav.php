@@ -7,6 +7,9 @@
         <div class="collapse navbar-collapse justify-content-between">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
+                    <a class="nav-link" href="/recommendations">Recommendations</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/books">Books</a>
                 </li>
                 <?php if (isset($_SESSION['user_id'])): ?>
