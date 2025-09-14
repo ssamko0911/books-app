@@ -2,8 +2,8 @@
 
 
 <h1><?= htmlspecialchars($book['title']) ?></h1>
-<p><strong>Author:</strong> <?= htmlspecialchars($book['author_name']) ?></p>
-<p><strong>Published:</strong> <?= htmlspecialchars($book['published_year']) ?></p>
+<p><strong>Author:</strong> <?= htmlspecialchars((string)$book['author_id']) ?></p>
+<p><strong>Published:</strong> <?= htmlspecialchars((string)$book['published_year']) ?></p>
 <p><?= htmlspecialchars($book['description']) ?></p>
 
 
@@ -22,5 +22,5 @@
     </ul>
 <?php endif; ?>
 
-<a href="/" class="btn btn-secondary mt-3">Back to Books</a>
+<a href="/books" class="btn btn-secondary mt-3">Back to Books</a>
 
