@@ -28,21 +28,33 @@ abstract class BaseRepository
         return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    //TODO:Refactor to make reusable across repos
-    public function create(string $title, int $author, int $user, ?string $description = null, ?int $publishedYear = null ): bool|string
+    public function create(array $data): bool|string
     {
-        $stmt = $this->connection->prepare("INSERT INTO `book_recommendations_books` (title,author_id,description,published_year,added_by_user) VALUES (?,?,?,?,?)");
-        $stmt->execute([
-            $title,
-            $author,
-            $description,
-            $publishedYear,
-            $user,
-        ]);
+        $columns = implode(', ', array_keys($data));
+        $values = ':' . implode(', :', array_keys($data));
+
+        $stmt = $this->connection->prepare("INSERT INTO {$this->table} ($columns) VALUES ($values)");
+        $stmt->execute($data);
 
         return $this->connection->lastInsertId();
     }
 
+    public function update(int $id, array $data): bool
+    {
+        $fields = implode(', ', array_map(static function (string $column): string {
+                return $column . ' = :' . $column;
+            }, array_keys($data)
+            )
+        );
+
+        $data['id'] = $id;
+
+        $stmt = $this->connection->prepare(
+            "UPDATE {$this->table} SET $fields WHERE id = :id"
+        );
+
+        return $stmt->execute($data);
+    }
 
     public function delete(int $id): bool
     {
