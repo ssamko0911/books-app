@@ -60,15 +60,16 @@ final class BookController extends BaseController
             $year = $_POST['published_year'] ?? null;
             $user_id = (int)$_SESSION['user_id'];
 
-            if ($title && $author_id) {
-                $this->bookRepository->create(
-                    $title,
-                    (int)$author_id,
-                    $user_id,
-                    $description,
-                    $year ? (int)$year : null,
-                );
+            $data = [
+                'title' => $title,
+                'author_id' => $author_id,
+                'description' => $description,
+                'published_year' => $year ? (int)$year : null,
+                'added_by_user' => $user_id,
+            ];
 
+            if ($title && $author_id) {
+                $this->bookRepository->create($data);
                 $this->redirect('/books');
             }
         }
@@ -93,7 +94,7 @@ final class BookController extends BaseController
             UrlTool::abort(StatusCode::FORBIDDEN);
         }
 
-        UrlTool::view(Path::EDIT_BOOK->value, [
+        $this->render(Path::EDIT_BOOK->value, [
             'book' => $book,
         ]);
     }
@@ -114,13 +115,15 @@ final class BookController extends BaseController
         $year = $_POST['published_year'] ?? null;
         $user_id = $_SESSION['user_id'];
 
-        $this->bookRepository->update($id, [
+        $data = [
             'title' => $title,
             'author_id' => $author_id,
             'description' => $description,
-            'published_year' => $year,
+            'published_year' => $year ? (int)$year : null,
             'added_by_user' => $user_id,
-        ]);
+        ];
+
+        $this->bookRepository->update($id, $data);
 
         $this->redirect('/books/' . $id);
     }

@@ -57,7 +57,13 @@ final class AuthController extends BaseController
             return AppStrings::EMAIL_EXISTS->value;
         }
 
-        $id = $this->userRepository->createUser($username, $email, $password);
+        $data = [
+            'username' => $username,
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_BCRYPT),
+        ];
+
+        $id = $this->userRepository->create($data);
 
         if ($id) {
             return true;
