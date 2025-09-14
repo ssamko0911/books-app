@@ -16,6 +16,9 @@
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-2" href="/books/add"> Add Book</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="/recommendations/add"> Add Recommendation</a>
+                    </li>
                 <?php endif; ?>
             </ul>
 
