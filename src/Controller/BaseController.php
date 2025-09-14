@@ -34,6 +34,7 @@ abstract class BaseController
         }
     }
 
+    //TODO: refactor
     protected function requireOwnerOrAdmin(array $book, string $message): void
     {
         if ('admin' !== $_SESSION['role'] && $book['added_by_user'] !== $_SESSION['user_id']) {
