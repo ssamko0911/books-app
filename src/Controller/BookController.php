@@ -6,6 +6,7 @@ use App\Enum\Path;
 use App\Repository\BookRepository;
 use App\Utils\Logger;
 use App\Utils\UrlTool;
+use JetBrains\PhpStorm\NoReturn;
 use PH7\JustHttp\StatusCode;
 
 final class BookController
@@ -39,7 +40,7 @@ final class BookController
             UrlTool::abort();
         }
 
-        UrlTool::view('/../../views/books/show.view.php', [
+        UrlTool::view(Path::SHOW_BOOK->value, [
             'book' => $book,
         ]);
     }
@@ -66,15 +67,19 @@ final class BookController
             $author_id = $_POST['author'] ?? '';
             $description = $_POST['description'] ?? '';
             $year = $_POST['published_year'] ?? null;
-            $user_id = $_SESSION['user_id'];
+            $user_id = (int)$_SESSION['user_id'];
 
             if ($title && $author_id) {
-                $this->bookRepository->create($title, $author_id, $description, $year ? (int)$year : null, $user_id);
-                UrlTool::view(Path::BOOKS_LIST->value, [
-                        'books' => $this->bookRepository->getAll(),
-                    ]
+                $this->bookRepository->create(
+                    $title,
+                    (int)$author_id,
+                    $user_id,
+                    $description,
+                    $year ? (int)$year : null,
                 );
-                exit;
+
+                header('Location: /books');
+                exit();
             }
         }
     }
@@ -92,7 +97,7 @@ final class BookController
             UrlTool::abort();
         }
 
-        if ($book['added_by_user'] !== $_SESSION['user_id']) {
+        if ('admin' !== $_SESSION['role'] && $book['added_by_user'] !== $_SESSION['user_id']) {
             Logger::getLogger()->warning('Unauthorized book edit attempt', [
                 'book_id' => $id,
                 'user_id' => $_SESSION['user_id'] ?? null,
@@ -133,6 +138,40 @@ final class BookController
             'added_by_user' => $user_id,
         ]);
 
-        $this->show($id);
+        header("Location: /books/$id");
+        exit();
+    }
+
+    #[NoReturn] public function delete(int $id): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            UrlTool::view(Path::LOGIN->value);
+        }
+
+        if ('admin' !== $_SESSION['role']) {
+            Logger::getLogger()->warning('Unauthorized book delete attempt', [
+                'book_id' => $id,
+                'user_id' => $_SESSION['user_id'] ?? null,
+                'role' => $_SESSION['role'] ?? null,
+            ]);
+
+            UrlTool::abort(StatusCode::FORBIDDEN);
+        }
+
+        $book = $this->bookRepository->findOneById($id);
+
+        if (null === $book) {
+            UrlTool::abort();
+        }
+
+        $this->bookRepository->delete($id);
+
+        Logger::getLogger()->info('Book deleted', [
+            'book_id' => $id,
+            'user_id' => $_SESSION['user_id'],
+        ]);
+
+        header('Location: /books');
+        exit();
     }
 }
