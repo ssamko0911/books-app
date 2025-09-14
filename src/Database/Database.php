@@ -1,14 +1,20 @@
 <?php declare(strict_types=1);
 
 namespace App\Database;
+
+use App\Utils\Logger;
+use App\Utils\UrlTool;
 use PDO;
 use PDOException;
+use PH7\JustHttp\StatusCode;
 
 class Database
 {
     private static ?PDO $dbInstance = null;
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public static function getInstance(): PDO
     {
@@ -26,8 +32,16 @@ class Database
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]);
+
+                Logger::getLogger()->info('DB connected successfully');
             } catch (PDOException $e) {
-                die ('DB Connection failed: ' . $e->getMessage());
+                Logger::getLogger()->error('DB Connection failed: ' . $e->getMessage(), [
+                    'host' => $host,
+                    'db' => $db,
+                    'exception' => $e,
+                ]);
+
+                UrlTool::abort(StatusCode::INTERNAL_SERVER_ERROR);
             }
         }
 
