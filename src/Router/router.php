@@ -28,7 +28,7 @@ $routes = [
     '/register-form' =>  [AuthController::class, 'showRegisterForm'],
 ];
 
-function route($uri, $routes, $dbConnection)
+function route($uri, $routes, $dbConnection): void
 {
     $routeFound = false;
     foreach ($routes as $pattern => [$controllerClass, $method]) {
