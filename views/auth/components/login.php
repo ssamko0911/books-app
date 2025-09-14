@@ -1,8 +1,10 @@
 <?php declare(strict_types=1);
 
 use App\Controller\AuthController;
+use App\Database\Database;
 
-$auth = new AuthController();
+$dbConnection = Database::getInstance();
+$auth = new AuthController($dbConnection);
 $error = '';
 
 if ('POST' === $_SERVER['REQUEST_METHOD']) {

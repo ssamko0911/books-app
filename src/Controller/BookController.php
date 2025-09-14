@@ -7,15 +7,16 @@ use App\Repository\BookRepository;
 use App\Utils\Logger;
 use App\Utils\UrlTool;
 use JetBrains\PhpStorm\NoReturn;
+use PDO;
 use PH7\JustHttp\StatusCode;
 
 final class BookController
 {
     private BookRepository $bookRepository;
 
-    public function __construct()
+    public function __construct(PDO $connection)
     {
-        $this->bookRepository = new BookRepository();
+        $this->bookRepository = new BookRepository($connection);
     }
 
     public function index(): void

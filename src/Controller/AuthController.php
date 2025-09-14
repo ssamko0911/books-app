@@ -7,14 +7,15 @@ use App\Enum\Path;
 use App\Repository\UserRepository;
 use App\Utils\UrlTool;
 use JetBrains\PhpStorm\NoReturn;
+use PDO;
 
 final readonly class AuthController
 {
     private UserRepository $userRepository;
 
-    public function __construct()
+    public function __construct(PDO $connection)
     {
-        $this->userRepository = new UserRepository();
+        $this->userRepository = new UserRepository($connection);
     }
 
     #[NoReturn] public function showLoginForm(): void

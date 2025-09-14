@@ -2,16 +2,15 @@
 
 namespace App\Repository;
 
-use App\Database\Database;
 use PDO;
 
 final class BookRepository
 {
     private PDO $connection;
 
-    public function __construct()
+    public function __construct(PDO $connection)
     {
-        $this->connection = Database::getInstance();
+        $this->connection = $connection;
     }
 
     public function getAll(): array

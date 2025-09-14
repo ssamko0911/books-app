@@ -3,8 +3,10 @@
 use App\Controller\AuthController;
 use App\Controller\BookController;
 use App\Controller\RecommendationsController;
+use App\Database\Database;
 use App\Utils\UrlTool;
 
+$dbConnection = Database::getInstance();
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
 
 $routes = [
@@ -25,7 +27,7 @@ $routes = [
     '/register-form' =>  [AuthController::class, 'showRegisterForm'],
 ];
 
-function route($uri, $routes)
+function route($uri, $routes, $dbConnection)
 {
     $routeFound = false;
     foreach ($routes as $pattern => [$controllerClass, $method]) {
@@ -35,7 +37,7 @@ function route($uri, $routes)
         if (preg_match($regex, $uri, $matches)) {
             array_shift($matches);
 
-            $controller = new $controllerClass();
+            $controller = new $controllerClass($dbConnection);
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && $method === 'login') {
                 $controller->$method();
             } else {
@@ -53,4 +55,4 @@ function route($uri, $routes)
     }
 }
 
-route($uri, $routes);
+route($uri, $routes, $dbConnection);

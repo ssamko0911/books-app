@@ -5,14 +5,15 @@ namespace App\Controller;
 use App\Enum\Path;
 use App\Repository\RecommendationRepository;
 use App\Utils\UrlTool;
+use PDO;
 
 final class RecommendationsController
 {
     private RecommendationRepository $recommendationRepository;
 
-    public function __construct()
+    public function __construct(PDO $connection)
     {
-        $this->recommendationRepository = new RecommendationRepository();
+        $this->recommendationRepository = new RecommendationRepository($connection);
     }
 
     public function index(): void
