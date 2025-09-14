@@ -21,7 +21,8 @@
         <?php endforeach; ?>
     </ul>
 <?php endif; ?>
-
-<a href="/books/<?= urlencode((string)$book['id']) ?>/edit" class="btn btn-outline-primary mt-3">Edit</a>
+<?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $book['added_by_user']): ?>
+    <a href="/books/<?= urlencode((string)$book['id']) ?>/edit" class="btn btn-outline-primary mt-3">Edit</a>
+<?php endif; ?>
 <a href="/books" class="btn btn-secondary mt-3">Back to Books</a>
 

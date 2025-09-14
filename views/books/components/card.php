@@ -7,6 +7,7 @@
                 <strong>Author:</strong> <?= htmlspecialchars($book['author_id']) ?><br>
                 <span class="badge bg-primary"><?= htmlspecialchars($book['created_at']) ?></span>
             </p>
+            <div class="d-flex gap-2">
             <a href="books/<?= urlencode($book['id']) ?>" class="btn btn-outline-primary">
                 View Details
             </a>
@@ -14,10 +15,11 @@
                 <a href="books/<?= urlencode($book['id']) ?>/edit" class="btn btn-outline-primary">
                     Edit
                 </a>
-                <a href="books/<?= urlencode($book['id']) ?>/delete" class="btn btn-outline-danger">
-                    Delete
-                </a>
+                <form action="/books/<?= urlencode($book['id']) ?>/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this book?');">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
