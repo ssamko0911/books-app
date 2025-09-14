@@ -2,12 +2,15 @@
 
 use App\Controller\AuthController;
 use App\Controller\BookController;
+use App\Controller\RecommendationsController;
 use App\Utils\UrlTool;
 
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
 
 $routes = [
-    '/' => [BookController::class, 'index'],
+    '/' => [RecommendationsController::class, 'index'],
+    '/recommendations' => [RecommendationsController::class, 'index'],
+    '/recommendations/{id}' => [RecommendationsController::class, 'show'],
     '/books' => [BookController::class, 'index'],
     '/books/{id}' => [BookController::class, 'show'],
     '/login' =>  [AuthController::class, 'login'],
