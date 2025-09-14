@@ -11,6 +11,9 @@
                 </li>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="/authors/add"> Add Author</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="btn btn-outline-light ms-2" href="/books/add"> Add Book</a>
                     </li>
                 <?php endif; ?>
