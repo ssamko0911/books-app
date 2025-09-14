@@ -15,6 +15,7 @@ $routes = [
     '/books/{id}' => [BookController::class, 'show'],
     '/books/{id}/edit' => [BookController::class, 'showEditBookForm'],
     '/books/{id}/update' => [BookController::class, 'update'],
+    '/books/{id}/delete' => [BookController::class, 'delete'],
     '/books/add' => [BookController::class, 'showAddBookForm'],
     '/books/store' => [BookController::class, 'store'],
     '/login' =>  [AuthController::class, 'login'],
