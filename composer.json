@@ -16,7 +16,8 @@
         }
     },
     "require": {
-        "ph-7/just-http-status-codes": "^1.1"
+        "ph-7/just-http-status-codes": "^1.1",
+        "monolog/monolog": "^3.9"
     }
     ,
     "require-dev": {
