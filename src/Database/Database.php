@@ -8,7 +8,7 @@ use PDO;
 use PDOException;
 use PH7\JustHttp\StatusCode;
 
-class Database
+final class Database
 {
     private static ?PDO $dbInstance = null;
 
