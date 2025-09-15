@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Controller\AuthController;
+use App\Controller\AuthorController;
 use App\Controller\BookController;
 use App\Controller\RecommendationsController;
 use App\Database\Database;
@@ -14,8 +15,8 @@ $routes = [
     '/' => [RecommendationsController::class, 'index'],
     '/recommendations' => [RecommendationsController::class, 'index'],
     '/recommendations/{id}' => [RecommendationsController::class, 'show'],
-    '/authors/add' => [AuthController::class, 'showAddAuthorForm'],
-    '/authors/store' => [AuthController::class, 'store'],
+    '/authors/add' => [AuthorController::class, 'showAddAuthorForm'],
+    '/authors/store' => [AuthorController::class, 'store'],
     '/books' => [BookController::class, 'index'],
     '/books/{id}' => [BookController::class, 'show'],
     '/books/{id}/edit' => [BookController::class, 'showEditBookForm'],
