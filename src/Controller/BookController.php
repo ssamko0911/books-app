@@ -14,6 +14,7 @@ use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PH7\JustHttp\StatusCode;
 
+//TODO: Add entity and DTOs
 final class BookController extends BaseController
 {
     private BookRepository $bookRepository;
