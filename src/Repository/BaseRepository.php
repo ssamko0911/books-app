@@ -8,6 +8,7 @@ abstract class BaseRepository
 {
     protected PDO $connection;
     protected string $table;
+    protected string $joiningTable;
 
     public function __construct(PDO $connection)
     {
