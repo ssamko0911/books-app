@@ -15,5 +15,13 @@
             "App\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "ph-7/just-http-status-codes": "^1.1",
+        "monolog/monolog": "^3.9"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "fakerphp/faker": "^1.24"
+    }
 }
