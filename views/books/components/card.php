@@ -4,7 +4,7 @@
         <div class="card-body">
             <h5 class="card-title"><?= htmlspecialchars($book['title']) ?></h5>
             <p class="card-text">
-                <strong>Author:</strong> <?= htmlspecialchars($book['author_id']) ?><br>
+                <strong>Author:</strong> <?= htmlspecialchars($book['first_name'] . ' ' . $book['last_name']) ?><br>
                 <span class="badge bg-primary"><?= htmlspecialchars($book['created_at']) ?></span>
             </p>
             <div class="d-flex gap-2">

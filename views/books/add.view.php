@@ -11,7 +11,14 @@
 
         <div class="mb-3">
             <label for="author" class="form-label">Author</label>
-            <input type="text" name="author" id="author" class="form-control" required>
+            <select name="author" id="author" class="form-select" required>
+                <option value="" disabled selected>Select an author</option>
+                <?php foreach ($authors as $author): ?>
+                    <option value="<?= htmlspecialchars((string)$author->id) ?>">
+                        <?= htmlspecialchars($author->fullName) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <div class="mb-3">

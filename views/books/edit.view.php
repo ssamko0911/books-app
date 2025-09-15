@@ -16,12 +16,15 @@
 
         <div class="mb-3">
             <label for="author" class="form-label">Author</label>
-            <input type="text"
-                   name="author"
-                   id="author"
-                   class="form-control"
-                   value="<?= htmlspecialchars((string)$book['author_id']) ?>"
-                   required>
+            <select name="author" id="author" class="form-select" required>
+                <option value="" disabled>Select an author</option>
+                <?php foreach ($authors as $author): ?>
+                    <option value="<?= htmlspecialchars((string)$author->id) ?>"
+                        <?= $author->id === $book['author_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($author->fullName) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <div class="mb-3">

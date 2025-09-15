@@ -2,7 +2,7 @@
 
 
 <h1><?= htmlspecialchars($book['title']) ?></h1>
-<p><strong>Author:</strong> <?= htmlspecialchars((string)$book['author_id']) ?></p>
+<p><strong>Author:</strong> <?= htmlspecialchars($book['first_name'] . ' ' . $book['last_name']) ?></p>
 <p><strong>Published:</strong> <?= htmlspecialchars((string)$book['published_year']) ?></p>
 <p><?= htmlspecialchars($book['description']) ?></p>
 
