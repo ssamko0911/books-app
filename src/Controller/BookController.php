@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Builder\AuthorBuilder;
+use App\Dto\AuthorSelectDTO;
+use App\Entity\Author;
 use App\Enum\AppStrings;
 use App\Enum\Path;
+use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 use App\Utils\Logger;
 use JetBrains\PhpStorm\NoReturn;
@@ -13,15 +17,19 @@ use PH7\JustHttp\StatusCode;
 final class BookController extends BaseController
 {
     private BookRepository $bookRepository;
+    private AuthorBuilder $authorBuilder;
+    private AuthorRepository $authorRepository;
 
     public function __construct(PDO $connection)
     {
         $this->bookRepository = new BookRepository($connection);
+        $this->authorBuilder = new AuthorBuilder();
+        $this->authorRepository = new AuthorRepository($connection);
     }
 
     public function index(): void
     {
-        $books = $this->bookRepository->getAll();
+        $books = $this->bookRepository->getAllWithAuthors();
 
         $this->render(Path::BOOKS_LIST->value, [
             'books' => $books,
@@ -32,7 +40,7 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $book = $this->bookRepository->findOneById($id);
+        $book = $this->bookRepository->findOneByIdWithAuthor($id);
 
         if (null === $book) {
             $this->abort();
@@ -46,7 +54,16 @@ final class BookController extends BaseController
     public function showAddBookForm(): void
     {
         $this->requireLogin();
-        $this->render(Path::ADD_BOOK->value);
+
+        $authors = $this->authorRepository->getForDropdown();
+
+        $authorDTOs = array_map(function (Author $author): AuthorSelectDTO {
+            return $this->authorBuilder->buildSelectDTO($author);
+        }, $authors);
+
+        $this->render(Path::ADD_BOOK->value, [
+            'authors' => $authorDTOs,
+        ]);
     }
 
     public function store(): void
@@ -85,10 +102,24 @@ final class BookController extends BaseController
             $this->abort();
         }
 
-        $this->requireOwnerOrAdmin($book, AppStrings::NOT_AUTHORISED_EDIT->value);
+        if ('admin' !== $_SESSION['role'] && $book['added_by_user'] !== $_SESSION['user_id']) {
+            Logger::getLogger()->warning(AppStrings::NOT_AUTHORISED_EDIT->value, [
+                'book_id' => $book['id'],
+                'user_id' => $_SESSION['user_id'] ?? null,
+            ]);
+
+            $this->abort(StatusCode::FORBIDDEN);
+        }
+
+        $authors = $this->authorRepository->getForDropdown();
+
+        $authorDTOs = array_map(function (Author $author): AuthorSelectDTO {
+            return $this->authorBuilder->buildSelectDTO($author);
+        }, $authors);
 
         $this->render(Path::EDIT_BOOK->value, [
             'book' => $book,
+            'authors' => $authorDTOs,
         ]);
     }
 
@@ -106,14 +137,14 @@ final class BookController extends BaseController
         $author_id = $_POST['author'] ?? '';
         $description = $_POST['description'] ?? '';
         $year = $_POST['published_year'] ?? null;
-        $user_id = $_SESSION['user_id'];
+        $added_by_user = $book['added_by_user'];
 
         $data = [
             'title' => $title,
             'author_id' => $author_id,
             'description' => $description,
             'published_year' => $year ? (int)$year : null,
-            'added_by_user' => $user_id,
+            'added_by_user' => $added_by_user,
         ];
 
         $this->bookRepository->update($id, $data);
