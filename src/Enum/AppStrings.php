@@ -12,4 +12,6 @@ enum AppStrings: string
     case NOT_AUTHORISED_EDIT = 'Unauthorized book edit attempt';
     case NOT_AUTHORISED_DELETE = 'Unauthorized book delete attempt';
     case BOOK_DELETE = 'Book deleted';
+    case DB_CONNECTION_FAILED = 'DB Connection failed: ';
+    case DB_CONNECTION_SUCCESS = 'DB connected successfully.';
 }

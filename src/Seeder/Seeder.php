@@ -3,7 +3,7 @@
 namespace App\Seeder;
 use Faker\Generator;
 use PDO;
-use \Faker\Factory as Factory;
+use Faker\Factory;
 abstract class Seeder
 {
     protected PDO $connection;

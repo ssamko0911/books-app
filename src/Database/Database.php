@@ -2,6 +2,7 @@
 
 namespace App\Database;
 
+use App\Enum\AppStrings;
 use App\Utils\Logger;
 use App\Utils\UrlTool;
 use PDO;
@@ -33,9 +34,9 @@ final class Database
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]);
 
-                Logger::getLogger()->info('DB connected successfully');
+                Logger::getLogger()->info(AppStrings::DB_CONNECTION_SUCCESS->value);
             } catch (PDOException $e) {
-                Logger::getLogger()->error('DB Connection failed: ' . $e->getMessage(), [
+                Logger::getLogger()->error(AppStrings::DB_CONNECTION_FAILED->value . $e->getMessage(), [
                     'host' => $host,
                     'db' => $db,
                     'exception' => $e,

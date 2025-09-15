@@ -3,7 +3,6 @@
 namespace App\Seeder;
 
 use App\Utils\Logger;
-
 class AuthorSeeder extends Seeder
 {
     public function run(int $count = 20): void

@@ -22,7 +22,7 @@ abstract class BaseRepository
     public function findOneById(int $id): ?array
     {
         $statement = $this->connection->prepare("SELECT * FROM {$this->table} WHERE `id` = :id");
-        $statement->bindParam(":id", $id, PDO::PARAM_INT);
+        $statement->bindParam(':id', $id, PDO::PARAM_INT);
         $statement->execute();
 
         return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
@@ -43,8 +43,7 @@ abstract class BaseRepository
     {
         $fields = implode(', ', array_map(static function (string $column): string {
                 return $column . ' = :' . $column;
-            }, array_keys($data)
-            )
+            }, array_keys($data))
         );
 
         $data['id'] = $id;
@@ -61,7 +60,7 @@ abstract class BaseRepository
         $stmt = $this->connection->prepare("DELETE FROM {$this->table} WHERE `id` = :id");
 
         return $stmt->execute([
-            ":id" => $id,
+            ':id' => $id,
         ]);
     }
 }
