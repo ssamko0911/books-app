@@ -19,6 +19,10 @@
                     </option>
                 <?php endforeach; ?>
             </select>
+            <input type="hidden"
+                   name="author_name"
+                   id="author_name"
+                   value="<?= htmlspecialchars($book->author->fullName ?? '') ?>">
         </div>
 
         <div class="mb-3">
