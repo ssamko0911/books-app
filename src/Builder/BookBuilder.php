@@ -4,6 +4,7 @@ namespace App\Builder;
 
 use App\Dto\AuthorSelectDTO;
 use App\Dto\BookDTO;
+use App\Entity\Author;
 use App\Entity\Book;
 
 final class BookBuilder
