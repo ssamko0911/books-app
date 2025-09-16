@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Builder\AuthorBuilder;
+use App\Builder\BookBuilder;
 use App\Dto\AuthorSelectDTO;
 use App\Entity\Author;
 use App\Enum\AppStrings;
@@ -14,17 +15,18 @@ use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PH7\JustHttp\StatusCode;
 
-//TODO: Add entity and DTOs
 final class BookController extends BaseController
 {
     private BookRepository $bookRepository;
     private AuthorBuilder $authorBuilder;
     private AuthorRepository $authorRepository;
+    private BookBuilder $bookBuilder;
 
     public function __construct(PDO $connection)
     {
         $this->bookRepository = new BookRepository($connection);
         $this->authorBuilder = new AuthorBuilder();
+        $this->bookBuilder = new BookBuilder();
         $this->authorRepository = new AuthorRepository($connection);
     }
 
@@ -47,8 +49,10 @@ final class BookController extends BaseController
             $this->abort();
         }
 
+        $bookDto = $this->bookBuilder->buildBookDTOFromEntity($book) ;
+
         $this->render(Path::SHOW_BOOK->value, [
-            'book' => $book,
+            'book' => $bookDto,
         ]);
     }
 
@@ -72,24 +76,9 @@ final class BookController extends BaseController
         $this->requireLogin();
 
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
-            $title = $_POST['title'] ?? '';
-            $author_id = $_POST['author'] ?? '';
-            $description = $_POST['description'] ?? '';
-            $year = $_POST['published_year'] ?? null;
-            $user_id = (int)$_SESSION['user_id'];
-
-            $data = [
-                'title' => $title,
-                'author_id' => $author_id,
-                'description' => $description,
-                'published_year' => $year ? (int)$year : null,
-                'added_by_user' => $user_id,
-            ];
-
-            if ($title && $author_id) {
-                $this->bookRepository->create($data);
-                $this->redirect('/books');
-            }
+            $bookDto = $this->bookBuilder->buildBookDTO($_POST);
+            $this->bookRepository->createFromDTO($bookDto);
+            $this->redirect('/books');
         }
     }
 
@@ -97,13 +86,13 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $book = $this->bookRepository->findOneById($id);
+        $book = $this->bookRepository->findOneByIdWithAuthor($id);
 
         if (null === $book) {
             $this->abort();
         }
 
-        if ('admin' !== $_SESSION['role'] && $book['added_by_user'] !== $_SESSION['user_id']) {
+        if ('admin' !== $_SESSION['role'] && $book->getAddedByUserId() !== $_SESSION['user_id']) {
             Logger::getLogger()->warning(AppStrings::NOT_AUTHORISED_EDIT->value, [
                 'book_id' => $book['id'],
                 'user_id' => $_SESSION['user_id'] ?? null,
@@ -119,7 +108,7 @@ final class BookController extends BaseController
         }, $authors);
 
         $this->render(Path::EDIT_BOOK->value, [
-            'book' => $book,
+            'book' => $this->bookBuilder->buildBookDTOFromEntity($book),
             'authors' => $authorDTOs,
         ]);
     }
@@ -128,27 +117,14 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $book = $this->bookRepository->findOneById($id);
+        $book = $this->bookRepository->findOneByIdWithAuthor($id);
 
         if (null === $book) {
             $this->abort();
         }
 
-        $title = $_POST['title'] ?? '';
-        $author_id = $_POST['author'] ?? '';
-        $description = $_POST['description'] ?? '';
-        $year = $_POST['published_year'] ?? null;
-        $added_by_user = $book['added_by_user'];
-
-        $data = [
-            'title' => $title,
-            'author_id' => $author_id,
-            'description' => $description,
-            'published_year' => $year ? (int)$year : null,
-            'added_by_user' => $added_by_user,
-        ];
-
-        $this->bookRepository->update($id, $data);
+        $bookDto = $this->bookBuilder->buildBookDTO($_POST);
+        $this->bookRepository->updateFromDTO($bookDto);
 
         $this->redirect('/books/' . $id);
     }
