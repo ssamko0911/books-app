@@ -4,7 +4,6 @@ namespace App\Builder;
 
 use App\Dto\AuthorSelectDTO;
 use App\Dto\BookDTO;
-use App\Entity\Author;
 use App\Entity\Book;
 
 final class BookBuilder
@@ -13,24 +12,17 @@ final class BookBuilder
     {
         $bookDto = new BookDTO();
 
-        $id = (int)($data['book_id'] ?? null);
-        $title = $data['title'] ?? '';
-        $authorId =  (int)$data['author'];
-        $authorFullName = $data['author_name'] ?? '';
-        $description = $data['description'] ?? '';
-        $publishedYear = $data['published_year'] ?? null;
         $addedByUserId = $userId;
-
-        $bookDto->id = $id;
-        $bookDto->title = $title;
+        $bookDto->id = $data['id'];
+        $bookDto->title = $data['title'];
 
         $authorDto = new AuthorSelectDTO();
-        $authorDto->id = $authorId;
-        $authorDto->fullName = $authorFullName;
+        $authorDto->id = $data['author_id'];
+        $authorDto->fullName = $data['author_name'];
 
         $bookDto->author = $authorDto;
-        $bookDto->description = $description;
-        $bookDto->publishedYear = $publishedYear ? (int)$publishedYear : null;
+        $bookDto->description = $data['description'];
+        $bookDto->publishedYear = $data['publishedYear'];
         $bookDto->addedByUserId = $addedByUserId;
 
         return $bookDto;
