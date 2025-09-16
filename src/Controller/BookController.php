@@ -11,6 +11,7 @@ use App\Enum\Path;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 use App\Utils\Logger;
+use App\Utils\SanitizerImpls\BookSanitizer;
 use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PH7\JustHttp\StatusCode;
@@ -21,6 +22,7 @@ final class BookController extends BaseController
     private AuthorBuilder $authorBuilder;
     private AuthorRepository $authorRepository;
     private BookBuilder $bookBuilder;
+    private BookSanitizer $sanitizer;
 
     public function __construct(PDO $connection)
     {
@@ -28,6 +30,7 @@ final class BookController extends BaseController
         $this->authorBuilder = new AuthorBuilder();
         $this->bookBuilder = new BookBuilder();
         $this->authorRepository = new AuthorRepository($connection);
+        $this->sanitizer = new BookSanitizer();
     }
 
     public function index(): void
@@ -81,7 +84,8 @@ final class BookController extends BaseController
         $this->requireLogin();
 
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
-            $bookDto = $this->bookBuilder->buildBookDTOFromRequest($_POST, $_SESSION['user_id']);
+            $sanitized = $this->sanitizer->sanitize($_POST);
+            $bookDto = $this->bookBuilder->buildBookDTOFromRequest($sanitized, $_SESSION['user_id']);
             $this->bookRepository->createFromDTO($bookDto);
             $this->redirect('/books');
         }
