@@ -6,8 +6,20 @@
     <form action="/books/store" method="post">
         <div class="mb-3">
             <label for="title" class="form-label">Book Title</label>
-            <input type="text" name="title" id="title" class="form-control" required>
+            <input type="text"
+                   name="title"
+                   id="title"
+                   class="form-control form-control <?= !empty($errors['title']) ? 'is-invalid' : '' ?>"
+                   value="<?= htmlspecialchars($old['title'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                   required>
+            <?php if (!empty($errors['title'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($errors['title']) ?>
+                </div>
+            <?php endif; ?>
         </div>
+
+
 
         <div class="mb-3">
             <label for="author" class="form-label">Author</label>
