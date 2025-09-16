@@ -12,9 +12,36 @@ final class BookRepository extends BaseRepository
     protected string $table = 'book_recommendations_books';
     protected string $joiningTable = 'book_recommendations_authors';
 
+    /**
+     * @return Book[]
+     */
     public function getAllWithAuthors(): array
     {
-        return $this->connection->query("SELECT b.*, a.first_name, a.last_name FROM {$this->table} b JOIN {$this->joiningTable} a ON a.id = b.author_id")->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $this->connection->query("SELECT b.*, a.first_name, a.last_name, a.bio FROM {$this->table} b JOIN {$this->joiningTable} a ON a.id = b.author_id")->fetchAll(PDO::FETCH_ASSOC);
+
+        $books = [];
+
+        foreach ($rows as $row) {
+            $author = new Author(
+                id: $row['author_id'],
+                firstName: $row['first_name'],
+                lastName: $row['last_name'],
+                biography: $row['bio'],
+            );
+
+            $book = new Book(
+                id: $row['id'],
+                title: $row['title'],
+                author: $author,
+                description: $row['description'],
+                publishedYear: $row['published_year'],
+                addedByUserId: $row['added_by_user'],
+            );
+
+            $books[] = $book;
+        }
+
+        return $books;
     }
 
     public function findOneByIdWithAuthor(int $id): ?Book
