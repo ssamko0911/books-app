@@ -12,6 +12,7 @@ use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 use App\Utils\Logger;
 use App\Utils\SanitizerImpls\BookSanitizer;
+use App\Utils\ValidatorImpls\BookValidator;
 use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PH7\JustHttp\StatusCode;
@@ -23,6 +24,7 @@ final class BookController extends BaseController
     private AuthorRepository $authorRepository;
     private BookBuilder $bookBuilder;
     private BookSanitizer $sanitizer;
+    private BookValidator $validator;
 
     public function __construct(PDO $connection)
     {
@@ -31,6 +33,7 @@ final class BookController extends BaseController
         $this->bookBuilder = new BookBuilder();
         $this->authorRepository = new AuthorRepository($connection);
         $this->sanitizer = new BookSanitizer();
+        $this->validator = new BookValidator();
     }
 
     public function index(): void
@@ -74,8 +77,15 @@ final class BookController extends BaseController
             return $this->authorBuilder->buildSelectDTO($author);
         }, $authors);
 
+        $errors = $_SESSION['errors'] ?? [];
+        $old = $_SESSION['old'] ?? [];
+
+        unset($_SESSION['errors'], $_SESSION['old']);
+
         $this->render(Path::ADD_BOOK->value, [
             'authors' => $authorDTOs,
+            'errors' => $errors,
+            'old' => $old,
         ]);
     }
 
@@ -85,6 +95,15 @@ final class BookController extends BaseController
 
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             $sanitized = $this->sanitizer->sanitize($_POST);
+
+            $errors = $this->validator->validate($sanitized);
+
+            if([] !== $errors) {
+                $_SESSION['errors'] = $errors;
+                $_SESSION['old'] = $sanitized;
+                $this->redirect('/books/add');
+            }
+
             $bookDto = $this->bookBuilder->buildBookDTOFromRequest($sanitized, $_SESSION['user_id']);
             $this->bookRepository->createFromDTO($bookDto);
             $this->redirect('/books');
