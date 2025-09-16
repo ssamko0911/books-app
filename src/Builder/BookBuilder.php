@@ -8,7 +8,7 @@ use App\Entity\Book;
 
 final class BookBuilder
 {
-    public function buildBookDTO(array $data): BookDTO
+    public function buildBookDTOFromRequest(array $data, int $userId): BookDTO
     {
         $bookDto = new BookDTO();
 
@@ -18,7 +18,7 @@ final class BookBuilder
         $authorFullName = $data['author_name'] ?? '';
         $description = $data['description'] ?? '';
         $publishedYear = $data['published_year'] ?? null;
-        $addedByUserId = $_SESSION['user_id'];
+        $addedByUserId = $userId;
 
         $bookDto->id = $id;
         $bookDto->title = $title;

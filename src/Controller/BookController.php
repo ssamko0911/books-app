@@ -34,13 +34,13 @@ final class BookController extends BaseController
     {
         $books = $this->bookRepository->getAllWithAuthors();
 
-        $bookDtos = [];
+        $bookDTOs = [];
         foreach ($books as $book) {
-            $bookDtos[] = $this->bookBuilder->buildBookDTOFromEntity($book);
+            $bookDTOs[] = $this->bookBuilder->buildBookDTOFromEntity($book);
         }
 
         $this->render(Path::BOOKS_LIST->value, [
-            'books' => $bookDtos,
+            'books' => $bookDTOs,
         ]);
     }
 
@@ -81,7 +81,7 @@ final class BookController extends BaseController
         $this->requireLogin();
 
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
-            $bookDto = $this->bookBuilder->buildBookDTO($_POST);
+            $bookDto = $this->bookBuilder->buildBookDTOFromRequest($_POST, $_SESSION['user_id']);
             $this->bookRepository->createFromDTO($bookDto);
             $this->redirect('/books');
         }
@@ -128,7 +128,7 @@ final class BookController extends BaseController
             $this->abort();
         }
 
-        $bookDto = $this->bookBuilder->buildBookDTO($_POST);
+        $bookDto = $this->bookBuilder->buildBookDTOFromRequest($_POST, $_SESSION['user_id']);
         $this->bookRepository->updateFromDTO($bookDto);
 
         $this->redirect('/books/' . $id);
