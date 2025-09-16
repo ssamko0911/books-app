@@ -34,7 +34,7 @@ final class RecommendationsController extends BaseController
             UrlTool::abort();
         }
 
-        $this->render(Path::RECOMMENDATIONS_LIST->value, [
+        $this->render(Path::RECOMMENDATIONS_SHOW->value, [
                 'recommendation' => $recommendation,
             ]
         );
