@@ -34,8 +34,13 @@ final class BookController extends BaseController
     {
         $books = $this->bookRepository->getAllWithAuthors();
 
+        $bookDtos = [];
+        foreach ($books as $book) {
+            $bookDtos[] = $this->bookBuilder->buildBookDTOFromEntity($book);
+        }
+
         $this->render(Path::BOOKS_LIST->value, [
-            'books' => $books,
+            'books' => $bookDtos,
         ]);
     }
 
