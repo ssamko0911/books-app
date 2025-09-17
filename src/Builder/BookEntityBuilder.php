@@ -6,9 +6,9 @@ use App\Dto\AuthorSelectDTO;
 use App\Dto\BookDTO;
 use App\Entity\Book;
 
-final class BookBuilder
+final class BookEntityBuilder
 {
-    public function buildBookDTOFromRequest(array $data, int $userId): BookDTO
+    public function buildDTOFromRequest(array $data, int $userId): BookDTO
     {
         $bookDto = new BookDTO();
 
@@ -28,7 +28,7 @@ final class BookBuilder
         return $bookDto;
     }
 
-    public function buildBookDTOFromEntity(Book $book): BookDTO
+    public function buildDTO(Book $book): BookDTO
     {
         $bookDto = new BookDTO();
         $bookDto->id = $book->getId();
@@ -44,5 +44,19 @@ final class BookBuilder
         $bookDto->addedByUserId = $book->getAddedByUserId();
 
         return $bookDto;
+    }
+
+    /**
+     * @param Book[] $books
+     * @return BookDTO[]
+     */
+    public function buildDTOs(array $books): array
+    {
+        $bookDTOs = [];
+        foreach ($books as $book) {
+            $bookDTOs[] = $this->buildDTO($book);
+        }
+
+        return $bookDTOs;
     }
 }

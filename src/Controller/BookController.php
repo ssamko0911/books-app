@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Builder\AuthorBuilder;
-use App\Builder\BookBuilder;
+use App\Builder\BookEntityBuilder;
 use App\Dto\AuthorSelectDTO;
 use App\Entity\Author;
 use App\Enum\AppStrings;
@@ -19,18 +19,18 @@ use PH7\JustHttp\StatusCode;
 
 final class BookController extends BaseController
 {
-    private BookRepository $bookRepository;
+    private BookRepository $repository;
     private AuthorBuilder $authorBuilder;
     private AuthorRepository $authorRepository;
-    private BookBuilder $bookBuilder;
+    private BookEntityBuilder $builder;
     private BookSanitizer $sanitizer;
     private BookValidator $validator;
 
     public function __construct(PDO $connection)
     {
-        $this->bookRepository = new BookRepository($connection);
+        $this->repository = new BookRepository($connection);
         $this->authorBuilder = new AuthorBuilder();
-        $this->bookBuilder = new BookBuilder();
+        $this->builder = new BookEntityBuilder();
         $this->authorRepository = new AuthorRepository($connection);
         $this->sanitizer = new BookSanitizer();
         $this->validator = new BookValidator();
@@ -38,12 +38,9 @@ final class BookController extends BaseController
 
     public function index(): void
     {
-        $books = $this->bookRepository->getAllWithAuthors();
+        $books = $this->repository->getAllWithAuthors();
 
-        $bookDTOs = [];
-        foreach ($books as $book) {
-            $bookDTOs[] = $this->bookBuilder->buildBookDTOFromEntity($book);
-        }
+        $bookDTOs = $this->builder->buildDTOs($books);
 
         $this->render(Path::BOOKS_LIST->value, [
             'books' => $bookDTOs,
@@ -54,13 +51,13 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $book = $this->bookRepository->findOneByIdWithAuthor($id);
+        $book = $this->repository->findOneByIdWithAuthor($id);
 
         if (null === $book) {
             $this->abort();
         }
 
-        $bookDto = $this->bookBuilder->buildBookDTOFromEntity($book) ;
+        $bookDto = $this->builder->buildDTO($book) ;
 
         $this->render(Path::SHOW_BOOK->value, [
             'book' => $bookDto,
@@ -104,8 +101,8 @@ final class BookController extends BaseController
                 $this->redirect('/books/add');
             }
 
-            $bookDto = $this->bookBuilder->buildBookDTOFromRequest($sanitized, $_SESSION['user_id']);
-            $this->bookRepository->createFromDTO($bookDto);
+            $bookDto = $this->builder->buildDTOFromRequest($sanitized, $_SESSION['user_id']);
+            $this->repository->createFromDTO($bookDto);
             $this->redirect('/books');
         }
     }
@@ -114,7 +111,7 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $book = $this->bookRepository->findOneByIdWithAuthor($id);
+        $book = $this->repository->findOneByIdWithAuthor($id);
 
         if (null === $book) {
             $this->abort();
@@ -136,7 +133,7 @@ final class BookController extends BaseController
         }, $authors);
 
         $this->render(Path::EDIT_BOOK->value, [
-            'book' => $this->bookBuilder->buildBookDTOFromEntity($book),
+            'book' => $this->builder->buildDTO($book),
             'authors' => $authorDTOs,
         ]);
     }
@@ -145,14 +142,14 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $book = $this->bookRepository->findOneByIdWithAuthor($id);
+        $book = $this->repository->findOneByIdWithAuthor($id);
 
         if (null === $book) {
             $this->abort();
         }
 
-        $bookDto = $this->bookBuilder->buildBookDTOFromRequest($_POST, $_SESSION['user_id']);
-        $this->bookRepository->updateFromDTO($bookDto);
+        $bookDto = $this->builder->buildDTOFromRequest($_POST, $_SESSION['user_id']);
+        $this->repository->updateFromDTO($bookDto);
 
         $this->redirect('/books/' . $id);
     }
@@ -171,13 +168,13 @@ final class BookController extends BaseController
             $this->abort(StatusCode::FORBIDDEN);
         }
 
-        $book = $this->bookRepository->findOneById($id);
+        $book = $this->repository->findOneById($id);
 
         if (null === $book) {
             $this->abort();
         }
 
-        $this->bookRepository->delete($id);
+        $this->repository->delete($id);
 
         Logger::getLogger()->info(AppStrings::BOOK_DELETE->value, [
             'book_id' => $id,
