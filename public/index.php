@@ -4,5 +4,5 @@ session_start();
 
 require __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__ . '/../src/Router/router.php';
+require __DIR__ . '/../src/Router/routes.php';
 
