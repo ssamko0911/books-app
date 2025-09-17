@@ -1,10 +1,10 @@
 <?php declare(strict_types=1); ?>
 
 
-<h1><?= htmlspecialchars($book['title']) ?></h1>
-<p><strong>Author:</strong> <?= htmlspecialchars($book['first_name'] . ' ' . $book['last_name']) ?></p>
-<p><strong>Published:</strong> <?= htmlspecialchars((string)$book['published_year']) ?></p>
-<p><?= htmlspecialchars($book['description']) ?></p>
+<h1><?= htmlspecialchars($book->title) ?></h1>
+<p><strong>Author:</strong> <?= htmlspecialchars($book->author->fullName) ?></p>
+<p><strong>Published:</strong> <?= htmlspecialchars((string)$book->publishedYear) ?></p>
+<p><?= htmlspecialchars($book->description) ?></p>
 
 
 <h3 class="mt-4">Recommendations</h3>
@@ -21,8 +21,8 @@
         <?php endforeach; ?>
     </ul>
 <?php endif; ?>
-<?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $book['added_by_user']): ?>
-    <a href="/books/<?= urlencode((string)$book['id']) ?>/edit" class="btn btn-outline-primary mt-3">Edit</a>
+<?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $book->addedByUserId): ?>
+    <a href="/books/<?= urlencode((string)$book->id) ?>/edit" class="btn btn-outline-primary mt-3">Edit</a>
 <?php endif; ?>
 <a href="/books" class="btn btn-secondary mt-3">Back to Books</a>
 

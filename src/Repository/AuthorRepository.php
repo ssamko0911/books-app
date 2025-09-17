@@ -33,10 +33,10 @@ final class AuthorRepository extends BaseRepository
         $authors = [];
         foreach ($rows as $row) {
             $authors[] = new Author(
-                $row['id'],
-                $row['first_name'],
-                $row['last_name'],
-                $row['bio']
+                id: $row['id'],
+                firstName: $row['first_name'],
+                lastName: $row['last_name'],
+                biography: $row['bio']
             );
         }
 
