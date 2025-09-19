@@ -4,5 +4,5 @@ namespace App\Utils;
 
 abstract class BaseSanitizer
 {
-    abstract protected function sanitize(array $data): array;
+    abstract protected static function sanitize(array $data): array;
 }

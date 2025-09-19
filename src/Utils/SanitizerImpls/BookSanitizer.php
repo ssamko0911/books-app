@@ -6,7 +6,7 @@ use App\Utils\BaseSanitizer;
 
 final class BookSanitizer extends BaseSanitizer
 {
-    public function sanitize(array $data): array
+    public static function sanitize(array $data): array
     {
         return [
             'id' => (int)($data['book_id'] ?? null),
