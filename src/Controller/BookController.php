@@ -23,8 +23,6 @@ final class BookController extends BaseController
     private AuthorBuilder $authorBuilder;
     private AuthorRepository $authorRepository;
     private BookEntityBuilder $builder;
-    private BookSanitizer $sanitizer;
-    private BookValidator $validator;
 
     public function __construct(PDO $connection)
     {
@@ -32,14 +30,11 @@ final class BookController extends BaseController
         $this->authorBuilder = new AuthorBuilder();
         $this->builder = new BookEntityBuilder();
         $this->authorRepository = new AuthorRepository($connection);
-        $this->sanitizer = new BookSanitizer();
-        $this->validator = new BookValidator();
     }
 
     public function index(): void
     {
         $books = $this->repository->getAllWithAuthors();
-
         $bookDTOs = $this->builder->buildDTOs($books);
 
         $this->render(Path::BOOKS_LIST->value, [
@@ -91,9 +86,8 @@ final class BookController extends BaseController
         $this->requireLogin();
 
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
-            $sanitized = $this->sanitizer->sanitize($_POST);
-
-            $errors = $this->validator->validate($sanitized);
+            $sanitized = BookSanitizer::sanitize($_POST);
+            $errors = BookValidator::validate($sanitized);
 
             if([] !== $errors) {
                 $_SESSION['errors'] = $errors;
