@@ -25,14 +25,4 @@ final class AuthorBuilder
 
         return $selectDTO;
     }
-
-    public function buildFromDto(AuthorCreateDTO $authorDTO): Author
-    {
-        return new Author(
-            null,
-            $authorDTO->firstName,
-            $authorDTO->lastName,
-            $authorDTO->biography
-        );
-    }
 }
