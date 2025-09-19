@@ -4,5 +4,5 @@ namespace App\Utils;
 
 abstract class BaseValidator
 {
-    abstract protected function validate(array $data): array;
+    abstract protected static function validate(array $data): array;
 }

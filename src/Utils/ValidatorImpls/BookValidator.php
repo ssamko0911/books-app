@@ -9,7 +9,7 @@ final class BookValidator extends BaseValidator
 {
     private const int TITLE_LEN_LIMIT = 200;
 
-    public function validate(array $data): array
+    public static function validate(array $data): array
     {
         $errors = [];
 
