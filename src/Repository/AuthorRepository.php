@@ -21,25 +21,10 @@ final class AuthorRepository extends BaseRepository
         return $this->create($data);
     }
 
-    /**
-     * @return Author[]
-     */
-    public function getForDropdown(): array
+    public function getAllOrdered(): array
     {
-        $rows = $this->connection->query(
+        return $this->connection->query(
             "SELECT id, first_name, last_name, bio FROM {$this->table} ORDER BY first_name, last_name"
         )->fetchAll(PDO::FETCH_ASSOC);
-
-        $authors = [];
-        foreach ($rows as $row) {
-            $authors[] = new Author(
-                id: $row['id'],
-                firstName: $row['first_name'],
-                lastName: $row['last_name'],
-                biography: $row['bio']
-            );
-        }
-
-        return $authors;
     }
 }
