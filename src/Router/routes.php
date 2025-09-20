@@ -5,10 +5,12 @@ use App\Controller\AuthorController;
 use App\Controller\BookController;
 use App\Controller\RecommendationsController;
 use App\Database\Database;
+use App\Factory\ControllerFactory;
 use App\Router\Router;
 
 $dbConnection = Database::getInstance();
-$router = new Router($dbConnection);
+$controllerFactory = new ControllerFactory($dbConnection);
+$router = new Router($controllerFactory);
 
 $router
     ->get('/', [RecommendationsController::class, 'index'])
@@ -28,7 +30,7 @@ $router
 
     ->get('/login-form', [AuthController::class, 'showLoginForm'])
     ->post('/login', [AuthController::class, 'login'])
-    ->post('/logout', [AuthController::class, 'logout'])
+    ->get('/logout', [AuthController::class, 'logout'])
     ->get('/register-form', [AuthController::class, 'showRegisterForm'])
     ->post('/register', [AuthController::class, 'register']);
 
