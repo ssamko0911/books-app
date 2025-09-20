@@ -2,20 +2,18 @@
 
 namespace App\Controller;
 
-use App\Builder\AuthorBuilder;
+use App\Builder\AuthorEntityBuilder;
 use App\Enum\Path;
 use App\Repository\AuthorRepository;
 use PDO;
 
 final class AuthorController extends BaseController
 {
-    private AuthorRepository $authorRepository;
-    private AuthorBuilder $authorBuilder;
-
-    public function __construct(PDO $connection)
+    public function __construct(
+        private AuthorRepository $authorRepository,
+        private AuthorEntityBuilder $authorBuilder
+    )
     {
-        $this->authorRepository = new AuthorRepository($connection);
-        $this->authorBuilder = new AuthorBuilder();
     }
 
     public function showAddAuthorForm(): void

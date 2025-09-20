@@ -6,15 +6,13 @@ use App\Enum\AppStrings;
 use App\Enum\Path;
 use App\Repository\UserRepository;
 use JetBrains\PhpStorm\NoReturn;
-use PDO;
 
 final class AuthController extends BaseController
 {
-    private UserRepository $userRepository;
-
-    public function __construct(PDO $connection)
+    public function __construct(
+        private readonly UserRepository $userRepository
+    )
     {
-        $this->userRepository = new UserRepository($connection);
     }
 
     #[NoReturn] public function showLoginForm(): void
@@ -22,7 +20,31 @@ final class AuthController extends BaseController
         $this->render(Path::LOGIN->value);
     }
 
-    public function login(string $email, string $password): bool|string
+    public function login(): void
+    {
+        if ('POST' !== $_SERVER['REQUEST_METHOD']) {
+            $this->render(Path::LOGIN->value);
+        }
+
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        $result = $this->loginUser($email, $password);
+
+        if (true === $result) {
+            header('Location: /');
+            exit();
+        }
+
+        $error = $result;
+
+        $this->render(Path::LOGIN->value, [
+                'error' => $error,
+            ]
+        );
+    }
+
+    private function loginUser(string $email, string $password): bool|string
     {
         $user = $this->userRepository->findByEmail($email);
 
@@ -49,6 +71,7 @@ final class AuthController extends BaseController
         $this->render(Path::REGISTER->value);
     }
 
+    // TODO: not working, rewrite old logic
     public function register(string $username, string $email, string $password): bool|string
     {
         $user = $this->userRepository->findByEmail($email);

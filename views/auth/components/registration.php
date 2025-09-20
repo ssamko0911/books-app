@@ -1,10 +1,13 @@
 <?php declare(strict_types=1);
 
+// TODO: Current registration is not working
 use App\Controller\AuthController;
 use App\Database\Database;
+use App\Repository\UserRepository;
 
 $dbConnection = Database::getInstance();
-$auth = new AuthController($dbConnection);
+$userRepository = new UserRepository($dbConnection);
+$auth = new AuthController($userRepository);
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

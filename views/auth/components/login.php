@@ -1,26 +1,6 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types=1); ?>
 
-use App\Controller\AuthController;
-use App\Database\Database;
-
-$dbConnection = Database::getInstance();
-$auth = new AuthController($dbConnection);
-$error = '';
-
-if ('POST' === $_SERVER['REQUEST_METHOD']) {
-    $result = $auth->login($_POST['email'], $_POST['password']);
-
-    if (true === $result) {
-        header('Location: /');
-        exit();
-    }
-
-    $error = $result;
-}
-
-?>
-
-<form method="POST">
+<form action="/login" method="POST">
     <label>
         <input type="email" name="email" placeholder="Email" required>
     </label>

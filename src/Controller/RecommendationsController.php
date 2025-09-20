@@ -5,15 +5,13 @@ namespace App\Controller;
 use App\Enum\Path;
 use App\Repository\RecommendationRepository;
 use App\Utils\UrlTool;
-use PDO;
 
 final class RecommendationsController extends BaseController
 {
-    private RecommendationRepository $recommendationRepository;
-
-    public function __construct(PDO $connection)
+    public function __construct(
+        private RecommendationRepository $recommendationRepository
+    )
     {
-        $this->recommendationRepository = new RecommendationRepository($connection);
     }
 
     public function index(): void
@@ -34,7 +32,7 @@ final class RecommendationsController extends BaseController
             UrlTool::abort();
         }
 
-        $this->render(Path::RECOMMENDATIONS_LIST->value, [
+        $this->render(Path::RECOMMENDATIONS_SHOW->value, [
                 'recommendation' => $recommendation,
             ]
         );
