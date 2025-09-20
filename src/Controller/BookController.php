@@ -45,15 +45,13 @@ final class BookController extends BaseController
     {
         $this->requireLogin();
 
-        $authors = $this->service->getAuthorsForBookInsert();
-
         $errors = $_SESSION['errors'] ?? [];
         $old = $_SESSION['old'] ?? [];
 
         unset($_SESSION['errors'], $_SESSION['old']);
 
         $this->render(Path::ADD_BOOK->value, [
-            'authors' => $authors,
+            'authors' => $this->service->getAuthorChoices(),
             'errors' => $errors,
             'old' => $old,
         ]);
@@ -99,11 +97,9 @@ final class BookController extends BaseController
             $this->abort(StatusCode::FORBIDDEN);
         }
 
-        $authors = $this->service->getAuthorsForBookInsert();
-
         $this->render(Path::EDIT_BOOK->value, [
             'book' => $book,
-            'authors' => $authors,
+            'authors' => $this->service->getAuthorChoices(),
         ]);
     }
 
