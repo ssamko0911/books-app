@@ -2,27 +2,49 @@
 
 namespace App\Builder;
 
-use App\Dto\AuthorSelectDTO;
 use App\Dto\BookDTO;
 use App\Entity\Book;
 
 final class BookEntityBuilder
 {
+    public function __construct(
+        private AuthorEntityBuilder $authorBuilder
+    )
+    {
+    }
+    public function buildFromRow(array $row): Book
+    {
+        return new Book(
+            id: $row['id'],
+            title: $row['title'],
+            author: $this->authorBuilder->buildFromRow($row),
+            description: $row['description'],
+            publishedYear: $row['published_year'],
+            addedByUserId: $row['added_by_user'],
+        );
+    }
+
+    public function buildBooksFromRow(array $rows): array
+    {
+        $books = [];
+
+        foreach ($rows as $row) {
+            $books[] = $this->buildFromRow($row);
+        }
+
+        return $books;
+    }
+
     public function buildDTOFromRequest(array $data, int $userId): BookDTO
     {
         $bookDto = new BookDTO();
 
         $addedByUserId = $userId;
-        $bookDto->id = $data['id'];
+        $bookDto->id = (int) ($data['book_id'] ?? null);
         $bookDto->title = $data['title'];
-
-        $authorDto = new AuthorSelectDTO();
-        $authorDto->id = $data['author_id'];
-        $authorDto->fullName = $data['author_name'];
-
-        $bookDto->author = $authorDto;
+        $bookDto->author = $this->authorBuilder->buildDTOFromRequest($data);
         $bookDto->description = $data['description'];
-        $bookDto->publishedYear = $data['publishedYear'];
+        $bookDto->publishedYear = (int) $data['published_year'];
         $bookDto->addedByUserId = $addedByUserId;
 
         return $bookDto;
@@ -33,12 +55,7 @@ final class BookEntityBuilder
         $bookDto = new BookDTO();
         $bookDto->id = $book->getId();
         $bookDto->title = $book->getTitle();
-
-        $authorDto = new AuthorSelectDTO();
-        $authorDto->id = $book->getAuthor()->getId();
-        $authorDto->fullName = $book->getAuthor()->getFullName();
-
-        $bookDto->author = $authorDto;
+        $bookDto->author = $this->authorBuilder->buildAuthorSelectDTO($book->getAuthor());
         $bookDto->description = $book->getDescription();
         $bookDto->publishedYear = $book->getPublishedYear();
         $bookDto->addedByUserId = $book->getAddedByUserId();
