@@ -19,8 +19,6 @@
             <?php endif; ?>
         </div>
 
-
-
         <div class="mb-3">
             <label for="author" class="form-label">Author</label>
             <select name="author" id="author" class="form-select" required>
@@ -34,7 +32,7 @@
             <input type="hidden"
                    name="author_name"
                    id="author_name"
-                   value="<?= htmlspecialchars($book->author->fullName ?? '') ?>">
+                   value="<?= htmlspecialchars($author->fullName ?? '') ?>">
         </div>
 
         <div class="mb-3">
