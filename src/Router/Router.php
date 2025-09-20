@@ -1,18 +1,19 @@
 <?php declare(strict_types=1);
 
 namespace App\Router;
+use App\Factory\ControllerFactory;
 use App\Utils\UrlTool;
 use JetBrains\PhpStorm\NoReturn;
-use PDO;
+use RuntimeException;
 
-class Router
+final class Router
 {
     private array $routes = [];
-    private PDO $connection;
 
-    public function __construct(PDO $connection)
+    public function __construct(
+        private readonly ControllerFactory $factory
+    )
     {
-        $this->connection = $connection;
     }
 
     public function post(string $pattern, array $handler): self
@@ -38,7 +39,9 @@ class Router
 
     private function buildRegex(string $pattern): string
     {
-        $regex = preg_replace('#\{[a-zA-Z_]+\}#', '([0-9]+)', $pattern);
+        $regex = preg_replace_callback('#\{([a-zA-Z_]+)}#', static function ($matches) {
+            return '(?P<' . $matches[1] . '>[0-9]+)';
+        }, $pattern);
 
         return "#^$regex$#";
     }
@@ -80,8 +83,13 @@ class Router
         preg_match($route['regex'], $uri, $matches);
         $params = $this->extractParams($matches);
 
-        $controller = new $controllerClass($this->connection);
-        $controller->$method(...array_values($params));
+        try {
+            $controller = $this->factory->make($controllerClass);
+            $controller->$method(...array_values($params));
+        } catch (RuntimeException $e) {
+            // TODO: Add Logging + Ex handling
+            throw $e;
+        }
     }
 
     private function extractParams(array $matches): array
