@@ -65,6 +65,7 @@ final class BookController extends BaseController
             $this->redirect('/books/add');
         }
 
+        // TODO: refactor -> inject into BookService
         $sanitized = BookSanitizer::sanitize($_POST);
         $errors = BookValidator::validate($sanitized);
 
