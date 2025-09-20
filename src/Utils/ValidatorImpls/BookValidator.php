@@ -21,12 +21,12 @@ final class BookValidator extends BaseValidator
             $errors['title'] = AppStrings::LONG_TITLE->value . self::TITLE_LEN_LIMIT;
         }
 
-        if ('' === ($data['publishedYear'])) {
-            $errors['publishedYear'] = AppStrings::EMPTY_PUBLISHED_YEAR->value;
+        if ('' === ($data['published_year'])) {
+            $errors['published_year'] = AppStrings::EMPTY_PUBLISHED_YEAR->value;
         }
 
-        if ($data['publishedYear'] < 0 || $data['publishedYear'] > 2050) {
-            $errors['publishedYear'] = AppStrings::OUT_OF_RANGE_YEAR->value;
+        if ($data['published_year'] < 0 || $data['published_year'] > 2050) {
+            $errors['published_year'] = AppStrings::OUT_OF_RANGE_YEAR->value;
         }
 
         return $errors;
