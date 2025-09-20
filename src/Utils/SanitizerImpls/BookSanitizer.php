@@ -11,10 +11,10 @@ final class BookSanitizer extends BaseSanitizer
         return [
             'id' => (int)($data['book_id'] ?? null),
             'title' => trim(strip_tags($data['title'] ?? '')),
-            'author_id' => (int)$data['author'],
+            'author' => (int)$data['author'],
             'author_name' => $data['author_name'] ?? '',
             'description' => trim(strip_tags($data['description'] ?? '')),
-            'publishedYear' => (int)($data['published_year'] ?? null),
+            'published_year' => (int)($data['published_year'] ?? null),
         ];
     }
 }
