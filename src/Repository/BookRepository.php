@@ -11,9 +11,6 @@ final class BookRepository extends BaseRepository
     protected string $table = 'book_recommendations_books';
     protected string $joiningTable = 'book_recommendations_authors';
 
-    /**
-     * @return Book[]
-     */
     public function getAllWithAuthors(): array
     {
         return $this->connection->query("SELECT b.*, a.first_name, a.last_name, a.bio FROM {$this->table} b JOIN {$this->joiningTable} a ON a.id = b.author_id")->fetchAll(PDO::FETCH_ASSOC);
