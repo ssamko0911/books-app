@@ -33,3 +33,5 @@ services:
     networks:
       - db-network
     restart: unless-stopped
+
+    # add DB container

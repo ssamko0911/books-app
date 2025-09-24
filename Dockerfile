@@ -1,5 +1,12 @@
 FROM php:8.3-fpm as books-app
 
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    zip \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install pdo_mysql extension
 RUN docker-php-ext-install pdo pdo_mysql
 
