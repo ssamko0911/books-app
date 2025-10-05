@@ -4,9 +4,7 @@ namespace App\Service;
 
 use App\Builder\AuthorEntityBuilder;
 use App\Builder\BookEntityBuilder;
-use App\Dto\AuthorSelectDTO;
 use App\Dto\BookDTO;
-use App\Entity\Author;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 
