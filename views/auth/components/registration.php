@@ -1,37 +1,6 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types=1); ?>
 
-// TODO: Current registration is not working
-use App\Controller\AuthController;
-use App\Database\Database;
-use App\Repository\UserRepository;
-
-$dbConnection = Database::getInstance();
-$userRepository = new UserRepository($dbConnection);
-$auth = new AuthController($userRepository);
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm = $_POST['password_confirmation'];
-
-    if ($password !== $confirm) {
-        $error = "Passwords do not match.";
-    } else {
-        $result = $auth->register($username, $email, $password);
-
-        if (true === $result) {
-            $auth->login($email, $password);
-            header('Location: /');
-            exit();
-        }
-
-        $error = $result;
-    }
-}
-?>
-<form method="POST">
+<form action="/register" method="POST">
     <label>
         <input type="text" name="username" placeholder="Username" required>
     </label>
@@ -47,4 +16,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Sign Up</button>
 </form>
 
-<?php if ($error) echo "<p>$error</p>"; ?>
+<?php if (isset($error)) echo "<p>$error</p>"; ?>
