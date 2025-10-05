@@ -11,7 +11,7 @@ use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 
 
-class BookService
+readonly class BookService
 {
     public function __construct(
         private BookRepository      $bookRepository,
@@ -27,32 +27,31 @@ class BookService
      */
     public function getAllBooksWithAuthors(): array
     {
-        $data = $this->bookRepository->getAllWithAuthors();
-        $books = $this->bookBuilder->buildBooksFromRow($data);
+        $rows = $this->bookRepository->getAllWithAuthors();
+        $books = $this->bookBuilder->buildEntitiesFromRows($rows);
 
         return $this->bookBuilder->buildDTOs($books);
     }
 
     public function getBookWithAuthor(int $id): ?BookDTO
     {
-        $data = $this->bookRepository->findOneByIdWithAuthor($id);
+        $row = $this->bookRepository->findOneByIdWithAuthor($id);
 
-        if (null === $data) {
+        if (null === $row) {
             return null;
         }
 
-        $book = $this->bookBuilder->buildFromRow($data);
+        $book = $this->bookBuilder->buildEntityFromRow($row);
 
         return $this->bookBuilder->buildDTO($book);
     }
 
-    public function getAuthorsForBookInsert(): array
+    public function getAuthorChoices(): array
     {
-        $authors = $this->authorRepository->getForDropdown();
+        $rows = $this->authorRepository->getAllOrdered();
+        $authors = $this->authorBuilder->buildEntitiesFromRows($rows);
 
-        return array_map(function (Author $author): AuthorSelectDTO {
-            return $this->authorBuilder->buildAuthorSelectDTO($author);
-        }, $authors);
+        return $this->authorBuilder->buildSelectDTOs($authors);
     }
 
     public function createBook(array $data): bool|string

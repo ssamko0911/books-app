@@ -55,22 +55,22 @@ final readonly class ControllerFactory
     private function makeAuthorController(): AuthorController
     {
         return new AuthorController(
-            new AuthorRepository($this->connection),
-            new AuthorEntityBuilder(),
+            authorRepository: new AuthorRepository($this->connection),
+            authorBuilder: new AuthorEntityBuilder(),
         );
     }
 
     private function makeRecommendationsController(): RecommendationsController
     {
         return new RecommendationsController(
-            new RecommendationRepository($this->connection),
+            recommendationRepository: new RecommendationRepository($this->connection),
         );
     }
 
     private function makeAuthController(): AuthController
     {
         return new AuthController(
-            new UserRepository($this->connection)
+            userRepository: new UserRepository($this->connection)
         );
     }
 }
