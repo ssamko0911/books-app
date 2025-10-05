@@ -71,13 +71,22 @@ final class AuthController extends BaseController
         $this->render(Path::REGISTER->value);
     }
 
-    // TODO: not working, rewrite old logic
-    public function register(string $username, string $email, string $password): bool|string
+    public function register(): void
     {
+        if ('POST' !== $_SERVER['REQUEST_METHOD']) {
+            $this->render(Path::REGISTER->value);
+        }
+
+        $username = $_POST['username'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
         $user = $this->userRepository->findByEmail($email);
 
-        if ($user) {
-            return AppStrings::EMAIL_EXISTS->value;
+        if (!$user) {
+            $this->render(Path::REGISTER->value, [
+                'error' => AppStrings::EMAIL_EXISTS->value,
+            ]);
         }
 
         $data = [
@@ -88,10 +97,22 @@ final class AuthController extends BaseController
 
         $id = $this->userRepository->create($data);
 
-        if ($id) {
-            return true;
+        if (!$id) {
+            $this->render(Path::REGISTER->value, [
+                'error' => AppStrings::REG_FAILED->value,
+            ]);
         }
 
-        return AppStrings::REG_FAILED->value;
+        $result = $this->loginUser($email, $password);
+
+        if (true === $result) {
+            header('Location: /');
+            exit();
+        }
+
+        $this->render(Path::REGISTER->value, [
+                'error' => $result,
+            ]
+        );
     }
 }
